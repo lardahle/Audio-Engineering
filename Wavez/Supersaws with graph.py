@@ -2,6 +2,7 @@
 # User specific settings 
 # =============================================================================
 import os
+import datetime
 
 # Define the directory path
 directory_path = 'C:/Users/IOX20/OneDrive - Texas A&M University/BMEN 211/Plugin/'
@@ -12,42 +13,25 @@ os.chdir(directory_path)
 # =============================================================================
 # Imports
 # =============================================================================
+
 import numpy as np
 from scipy.io import wavfile # WAV File Generation
 import matplotlib.pyplot as plt # Waveform Plotting
+import scipy
+from scipy import signal
+
 
 # =============================================================================
 # Inputs
 # =============================================================================
 note = 'C'
 octave = -2
-duration = 1
+duration = 5
 sample_rate = 44100
 
-################################## Equations ##################################
-'''
-# Sinusoidal wave with point of inflection
-equation = "np.sin(2 * np.pi * frequency * time_array) + 0.5 * np.sin(4 * np.pi * frequency * time_array)"
-
-# Sinusoidal wave with frequency 440 Hz
-equation = "np.sin(2 * np.pi * 440 * time_array)"  # Sine Wave
-
-# Sawtooth wave with frequency 880 Hz
-equation = "2 * (time_array * 880 - np.floor(0.5 + time_array * 880))"  # Sawtooth Wave
-
-# Triangle wave with frequency 220 Hz
-equation = "2 * np.abs(2 * (time_array * 220 - np.floor(0.5 + time_array * 220))) - 1"  # Triangle Wave
-
-# Square wave
-equation = "np.sign(np.sin(2 * np.pi * frequency * time_array))"  # Square Wave
-
-# Unit Step equation
-equation = "np.heaviside(time_array, 0.5)"
-'''
-
-equation = "2 * (time_array * frequency - np.floor(0.5 + time_array * frequency))"  # Sawtooth Wave
-
-
+#Supersaw specific parameters
+num_voices = 48
+detune = 0.2
 
 # =============================================================================
 # Functions
@@ -72,29 +56,6 @@ def get_note_frequency(note, octave):
     }
     return note_map[note] * (2**octave)
 
-def generate_waveform(equation, frequency, duration, sample_rate, file_name):
-
-    # Generate the time array and evaluate the equation at each time point
-    time_array = np.arange(0, duration, 1 / sample_rate)
-    waveform = eval(equation)
-
-    # Scale the waveform to the range of [-1, 1] and convert it to integers
-    scaled_waveform = waveform / np.max(np.abs(waveform))
-    int_waveform = np.int16(scaled_waveform * 32767)
-
-    # Export the waveform as a sound file
-    file_name = file_name.replace('frequency', f'{frequency}mhz')
-    file_name = f"{file_name}.wav"
-    wavfile.write(file_name, sample_rate, int_waveform)
-
-    # Plot the waveform
-    fig, ax = plt.subplots()
-    period_samples = int(sample_rate / frequency)
-    ax.plot(time_array[:period_samples], waveform[:period_samples])
-    ax.set_xlabel('Time (s)')
-    ax.set_ylabel('Amplitude')
-    plt.show()
-
 
 def graph_waveform(equation, frequency, duration, sample_rate):
     # Generate the time array and evaluate the equation at each time point
@@ -114,7 +75,37 @@ def graph_waveform(equation, frequency, duration, sample_rate):
     plt.ylabel('Amplitude')
     plt.title(file_name)
     plt.show()
+    '''
+    duration = len(signal) / sample_rate
+    t = np.linspace(0, duration, len(signal), endpoint=False)
+    plt.plot(t, signal)
+    plt.xlabel('Time (s)')
+    plt.ylabel('Amplitude')
+    if equation is not None:
+        plt.title(f'Waveform and Equation:\n{equation}')
+    else:
+        plt.title('Waveform')
+    plt.show()
+    '''
 
+
+def generate_supersaw(num_voices, detune, frequency, duration, sample_rate, file_name):
+    freq = get_note_frequency(note, octave)
+    t = np.linspace(0, duration, int(duration*sample_rate), endpoint=False)
+    supersaw = np.zeros(len(t))
+    for i in range(num_voices):
+        freq_i = freq*(i+1) + (i+1)*detune*freq
+        saw_i = signal.sawtooth(2 * np.pi * freq_i * t)
+        supersaw += saw_i / (i+1)
+    supersaw /= np.max(np.abs(supersaw))
+    equation = ''
+    for i in range(num_voices):
+        freq_i = freq*(i+1) + (i+1)*detune*freq
+        if i > 0:
+            equation += ' + '
+        equation += f'sawtooth({freq_i:.2f} * 2 * pi * t) / {i+1}'
+    equation += f', {num_voices} voices, detune={detune:.2f}'
+    return supersaw, equation, file_name
 
 
 # =============================================================================
@@ -124,16 +115,14 @@ def graph_waveform(equation, frequency, duration, sample_rate):
 # Get the frequency for the given note and octave
 frequency = get_note_frequency(note, octave)
 
-# Filter illegal characters from the file name
-file_name = equation
-file_name = file_name.replace('np.', '')
-file_name = file_name.replace('*', 'x')
-file_name = file_name.replace('<', 'less than')
-file_name = file_name.replace('np.pi', 'pi')
-file_name = file_name.replace('time_array', f'time_array_{int(sample_rate)}hz')
+# Generate file name based on input parameters and current date
+detune_cents = round(detune * 100, 2)
+date_string = datetime.datetime.now().strftime("%Y%m%d")
+file_name = f"Supersaw_{note}{octave}_voices{num_voices}_detune{detune_cents}c_{date_string}.wav"
 
 # Call the function to export the waveform as a sound file
-generate_waveform(equation, frequency, duration, sample_rate, file_name)
+supersaw, equation, file_name = generate_supersaw(num_voices, detune, frequency, duration, sample_rate, file_name)
+
 
 # Call the function to graph the waveform
 graph_waveform(equation, frequency, duration, sample_rate)
