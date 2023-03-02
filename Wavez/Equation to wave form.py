@@ -1,4 +1,40 @@
 # =============================================================================
+# Devlog
+# =============================================================================
+'''
+# Currently Implemented:
+    # Waveform generation given equation
+        # Note and octave specificity
+    # Graph of one period of waveform
+
+# Things to implement:
+    # Live tuning of samples
+        # Master Volume knob
+            #-20dB to +10dB
+        # UI
+            # Graphs of waveform
+                # Serum Esque, but with many waveforms
+                    # Color code with legend
+            # Knobs; potentiometer esque, include faders for misc parameters
+    # Multiple Voices
+        # Summation of waves via function
+            # Detune as parameter
+            # Number of voices as parameter
+            # Toggle for using set of equations under nomenclature (equation n)
+                # Otherwise prompt inputs of equations
+            # Toggle for supersaw / superimposed fxns (duplicate equations)
+        # Graph og waveforms dotted and final waveform solid
+    # Add Noise
+        # Toggle for type / frequency
+        # Parameters for level, randomness
+    # Frequency Analysis
+        # Bode Diagram plot of signal
+        # Visual EQ? Once live tuning gets set up
+    # LFO / Waveform to modulate parameters
+        # Macro system
+'''
+
+# =============================================================================
 # User specific settings 
 # =============================================================================
 import os
@@ -29,23 +65,23 @@ sample_rate = 44100
 # Sinusoidal wave with point of inflection
 equation = "np.sin(2 * np.pi * frequency * time_array) + 0.5 * np.sin(4 * np.pi * frequency * time_array)"
 
-# Sinusoidal wave with frequency 440 Hz
-equation = "np.sin(2 * np.pi * 440 * time_array)"  # Sine Wave
+# Sinusoidal wave
+equation = "np.sin(2 * np.pi * frequency * time_array)"  # Sine Wave
 
-# Sawtooth wave with frequency 880 Hz
-equation = "2 * (time_array * 880 - np.floor(0.5 + time_array * 880))"  # Sawtooth Wave
+# Sawtooth wave
+equation = "2 * (time_array * frequency - np.floor(0.5 + time_array * frequency))"  # Sawtooth Wave
 
-# Triangle wave with frequency 220 Hz
-equation = "2 * np.abs(2 * (time_array * 220 - np.floor(0.5 + time_array * 220))) - 1"  # Triangle Wave
+# Triangle wave
+equation = "2 * np.abs(2 * (time_array * frequency - np.floor(0.5 + time_array * frequency))) - 1"  # Triangle Wave
 
 # Square wave
 equation = "np.sign(np.sin(2 * np.pi * frequency * time_array))"  # Square Wave
 
 # Unit Step equation
-equation = "np.heaviside(time_array, 0.5)"
+equation = "np.heaviside(time_array, 0.5)" # Unit Step
 '''
 
-equation = "2 * (time_array * frequency - np.floor(0.5 + time_array * frequency))"  # Sawtooth Wave
+equation = "np.sign(np.sin(2 * np.pi * frequency * time_array))"  # Square Wave
 
 
 
