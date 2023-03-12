@@ -48,9 +48,17 @@ os.chdir(directory_path)
 # =============================================================================
 # Imports
 # =============================================================================
+# General Imports for waveform generation and plotting
 import numpy as np
 from scipy.io import wavfile # WAV File Generation
 import matplotlib.pyplot as plt # Waveform Plotting
+
+# Imports for Effects
+# Laplace Transform
+from sympy import laplace_transform, inverse_laplace_transform
+from sympy.abc import s, t
+
+
 
 # =============================================================================
 # Inputs
@@ -132,25 +140,77 @@ def generate_waveform(equation, frequency, duration, sample_rate, file_name):
     plt.show()
 
 
-def graph_waveform(equation, frequency, duration, sample_rate):
-    # Generate the time array and evaluate the equation at each time point
-    time_array = np.arange(0, duration, 1 / sample_rate)
-    waveform = eval(equation)
+def graph_waveform(summed_waveform, waveforms=None, sample_rate=44100, periods=1):
+    """
+    Plot waveforms given equations.
     
-    # Scale the waveform to the range of [-1, 1]
-    scaled_waveform = waveform / np.max(np.abs(waveform))
+    Parameters:
+    -----------
+    summed_waveform : np.array, optional
+        Array of the summed waveforms
+    waveforms : array of waveforms, (default is None).
+        If not specified, the function will plot only the summed waveform as a solid line.
+        Otherwise, it will plot all the individual waveforms as dotted lines and the
+        summed waveform as a solid line.
+    sample_rate : int, (default is 44100)
+        Sample rate of waveform.
+    periods : float, optional
+        Duration of waveform in seconds (default is 1).
+    
+    Returns:
+    --------
+    Plot of equation(s) at the length of one period of the equations 
+    """
+    # Determine the period of the waveform(s)
+    period_samples = len(summed_waveform) // periods
+    t = np.arange(period_samples) / sample_rate
 
-    # Set the x-axis limits to one period of the waveform
-    period = 1 / frequency
-    plt.xlim(0, period)
-    
-    # Plot the waveform
-    plt.plot(time_array, scaled_waveform)
-    plt.xlabel('Time (seconds)')
+    # Plot each individual waveform as a dotted line
+    if waveforms is not None:
+        for waveform in waveforms:
+            plt.plot(t, waveform[:period_samples], linestyle='dotted')
+
+    # Plot the summed waveform as a solid line
+    plt.plot(t, summed_waveform[:period_samples], linewidth=2)
+
+    plt.xlabel('Time (s)')
     plt.ylabel('Amplitude')
-    plt.title(file_name)
     plt.show()
 
+
+def sum_waveforms(waveforms):
+    """
+    Sum a list of waveforms.
+    
+    Parameters:
+        waveforms (list): List of waveforms to sum.
+        
+    Returns:
+        numpy.ndarray: Summed waveform.
+    """
+    if len(waveforms) == 1:
+        return waveforms[0]
+    else:
+        # Determine the maximum length of the waveforms
+        max_length = max(len(w) for w in waveforms)
+        
+        # Create a numpy array of zeros to hold the summed waveform
+        summed_waveform = np.zeros(max_length)
+        
+        # Sum the waveforms
+        for w in waveforms:
+            summed_waveform[:len(w)] += w
+        
+        return summed_waveform
+
+
+def laplace_transform_function(f):
+    F = laplace_transform(f, t, s)
+    return F[0]
+
+def inverse_laplace_transform_function(F):
+    f = inverse_laplace_transform(F, s, t)
+    return f
 
 
 # =============================================================================
