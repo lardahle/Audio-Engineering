@@ -1,0 +1,28 @@
+Equations Window:
+	* rows of equations
+		* toggle on left highlights green if active
+		* Text field to input equation
+		* +- switch for voices of each equation
+		* Detune knob
+		* Graph of each equations
+
+Sticky Footer:
+	* show summed waveform (including effects if viable)
+		* toggle for period vs. scrollable & zoomable window
+			* click to expand
+	* sticky footer can be toggled to show time domain or laplace/frequency domain
+
+
+Effects Window:
+	* allows for the input of a transfer function
+	* show the laplace of the function per equation and the waveform with the effect applied
+
+Master Window:
+	* knobs for general parameters
+		* Master gain
+		* Frequency
+		* Note generated 
+			* Utilize Midi for playing note / drag sample over to DAW
+	* Export directory
+	* Preset folder
+	* 
