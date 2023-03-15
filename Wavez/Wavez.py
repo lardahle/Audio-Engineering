@@ -1,3 +1,39 @@
+# =============================================================================
+# Devlog
+# =============================================================================
+
+'''
+# Currently Implemented:
+    # Waveform generation given equation
+        # Note and octave specificity
+    # Graph of one period of waveform
+
+# Things to implement:
+    # Live tuning of samples
+        # Master Volume knob
+            #-20dB to +10dB
+        # UI
+            # Graphs of waveform
+                # Serum Esque, but with many waveforms
+                    # Color code with legend
+            # Knobs; potentiometer esque, include faders for misc parameters
+    # Multiple Voices
+        # Summation of waves via function
+            # Detune as parameter
+            # Number of voices as parameter
+            # Toggle for using set of equations under nomenclature (equation n)
+                # Otherwise prompt inputs of equations
+            # Toggle for supersaw / superimposed fxns (duplicate equations)
+        # Graph og waveforms dotted and final waveform solid
+    # Add Noise
+        # Toggle for type / frequency
+        # Parameters for level, randomness
+    # Frequency Analysis
+        # Bode Diagram plot of signal
+        # Visual EQ? Once live tuning gets set up
+    # LFO / Waveform to modulate parameters
+        # Macro system
+'''
 
 # =============================================================================
 # User specific settings 

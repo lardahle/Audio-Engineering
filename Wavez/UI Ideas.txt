@@ -1,5 +1,5 @@
-Equations Window:
-	* rows of equations
+Equations Tab:
+	* rows of equations, columns as follows:
 		* toggle on left highlights green if active
 		* Text field to input equation
 		* +- switch for voices of each equation
@@ -11,17 +11,18 @@ Sticky Footer:
 		* toggle for period vs. scrollable & zoomable window
 			* click to expand
 	* sticky footer can be toggled to show time domain or laplace/frequency domain
+	* Master Detune
 
 
-Effects Window:
+Effects Tab:
 	* allows for the input of a transfer function
 	* show the laplace of the function per equation and the waveform with the effect applied
 
-Master Window:
+Master Tab:
 	* knobs for general parameters
 		* Master gain
-		* Frequency
-		* Note generated 
+		* Sample rate (Default 44100)
+		* Note generated (including octave, i.e. C1)
 			* Utilize Midi for playing note / drag sample over to DAW
 	* Export directory
 	* Preset folder
